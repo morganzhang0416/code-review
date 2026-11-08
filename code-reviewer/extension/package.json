@@ -1,0 +1,68 @@
+{
+  "name": "reviewer",
+  "displayName": "Reviewer",
+  "description": "Self-contained read-only code and documentation reviewer for local repositories.",
+  "version": "0.2.0",
+  "publisher": "chenyang",
+  "private": true,
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onChatParticipant:reviewer",
+    "onCommand:reviewer.review"
+  ],
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "reviewer",
+        "name": "reviewer",
+        "fullName": "Reviewer",
+        "description": "Review a local repository branch — code and docs. Read-only.",
+        "isSticky": true
+      }
+    ],
+    "commands": [
+      {
+        "command": "reviewer.review",
+        "title": "Reviewer: Review…",
+        "category": "Reviewer"
+      }
+    ],
+    "configuration": {
+      "title": "Reviewer",
+      "properties": {
+        "reviewer.rootDir": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Search root that must contain the repos you review by absolute path. Empty = `~/workspace`."
+        },
+        "reviewer.model": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Preferred Copilot model family (e.g. `claude-sonnet-4.6`). Empty = the extension default with automatic fallback."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "sync-assets": "node scripts/sync-assets.mjs",
+    "lint": "node scripts/check-thin-boundary.mjs",
+    "check-types": "tsc --noEmit -p .",
+    "bundle": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "compile": "npm run lint && npm run check-types && npm run bundle",
+    "package": "npm run sync-assets && npm run compile && vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0"
+  }
+}
